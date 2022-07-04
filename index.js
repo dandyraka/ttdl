@@ -29,7 +29,7 @@ import chalk from 'chalk'
             message: 'Target username?'
         }, ])
         .then(answers => {
-            return answers.tiktokTarget;
+            return answers.tiktokTarget.replace('@','');
         });
     const [page] = await browser.pages();
     page.setDefaultNavigationTimeout(0);
@@ -51,8 +51,9 @@ import chalk from 'chalk'
         const link = await page.evaluate(el => el.href, (await page.$x(`//*[@id="app"]/div[2]/div[2]/div/div[2]/div[2]/div/div[${i}]/div[1]/div/div/a`))[0])
         console.log(`[${i}] ${link}`)
         let filename = link.split("/").pop()+".mp4";
-        let getNowm = await axios.get(`https://server1.majhcc.xyz/api/tk?url=${link}`).then(resp => {
-            if(resp.data.success) return resp.data.link;
+        const getTiktokID = /tiktok\.com(.*)\/video\/(\d+)/gm.exec(link);
+        let getNowm = await axios.get(`https://toolav.herokuapp.com/id/?video_id=${getTiktokID[2]}`).then(resp => {
+            if(resp.data.item?.id) return resp.data.item.video.playAddr[0];
         });
         if(getNowm){
             await axios.get(getNowm, {
@@ -64,22 +65,23 @@ import chalk from 'chalk'
             })
             .catch(error => {
                 console.log(chalk.red("[!] Failed to download video.\n"));
-                console.log(error);
             });
         } else {
             console.log(chalk.red("[!] Failed to get video link without watermark.\n"));
         }
     }
     await browser.close();
+    console.log(info("All done!"));
+    process.exit(0);
 })();
 
 async function autoScroll(page){
     await page.evaluate(async () => {
         await new Promise((resolve, reject) => {
-            var totalHeight = 0;
-            var distance = 100;
-            var timer = setInterval(() => {
-                var scrollHeight = document.body.scrollHeight;
+            let totalHeight = 0;
+            let distance = 100;
+            let timer = setInterval(() => {
+                let scrollHeight = document.body.scrollHeight;
                 window.scrollBy(0, distance);
                 totalHeight += distance;
 
