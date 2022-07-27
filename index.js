@@ -52,8 +52,8 @@ import chalk from 'chalk'
         console.log(`[${i}] ${link}`)
         let filename = link.split("/").pop()+".mp4";
         const getTiktokID = /tiktok\.com(.*)\/video\/(\d+)/gm.exec(link);
-        let getNowm = await axios.get(`https://toolav.herokuapp.com/id/?video_id=${getTiktokID[2]}`).then(resp => {
-            if(resp.data.item?.id) return resp.data.item.video.playAddr[0];
+        let getNowm = await axios.get(`https://api2.musical.ly/aweme/v1/aweme/detail/?aweme_id=${getTiktokID[2]}`).then(resp => {
+            if(resp.data.aweme_detail?.aweme_id) return resp.data.aweme_detail.video.play_addr.url_list[0];
         });
         if(getNowm){
             await axios.get(getNowm, {
