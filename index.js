@@ -51,9 +51,9 @@ import chalk from 'chalk'
         const link = await page.evaluate(el => el.href, (await page.$x(`//*[@id="app"]/div[2]/div[2]/div/div[2]/div[2]/div/div[${i}]/div[1]/div/div/a`))[0])
         console.log(`[${i}] ${link}`)
         let filename = link.split("/").pop()+".mp4";
-        const getTiktokID = /tiktok\.com(.*)\/video\/(\d+)/gm.exec(link);
-        let getNowm = await axios.get(`https://api2.musical.ly/aweme/v1/aweme/detail/?aweme_id=${getTiktokID[2]}`).then(resp => {
-            if(resp.data.aweme_detail?.aweme_id) return resp.data.aweme_detail.video.play_addr.url_list[0];
+        //const getTiktokID = /tiktok\.com(.*)\/video\/(\d+)/gm.exec(link);
+        let getNowm = await axios.get(`https://api.douyin.wtf/api?url=${link}`).then(resp => {
+            if(resp.data.status === "success") return resp.data.nwm_video_url;
         });
         if(getNowm){
             await axios.get(getNowm, {
