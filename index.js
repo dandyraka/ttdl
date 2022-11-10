@@ -53,7 +53,10 @@ import chalk from 'chalk'
         let filename = link.split("/").pop()+".mp4";
         //const getTiktokID = /tiktok\.com(.*)\/video\/(\d+)/gm.exec(link);
         let getNowm = await axios.get(`https://api.douyin.wtf/api?url=${link}`).then(resp => {
-            if(resp.data.status === "success") return resp.data.nwm_video_url;
+            if(resp.data.status === "success") {
+                let nowm = resp.data.video_data.nwm_video_url_HQ || resp.data.video_data.nwm_video_url;
+                return nowm;
+            }
         });
         if(getNowm){
             await axios.get(getNowm, {
